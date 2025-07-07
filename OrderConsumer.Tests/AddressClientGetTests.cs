@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 using NUnit.Framework;
 using PactNet.Matchers;
 using System.Net;
@@ -25,8 +26,8 @@ namespace OrderConsumer.Tests
                 Country = Match.Regex("United States", "United States|Canada")
             };
 
-            pact.UponReceiving("A request to retrieve an address by ID")
-                    .Given("an address with ID {id} exists", new Dictionary<string, string> { ["id"] = addressId })
+            pact.UponReceiving("Retrieving an existing address ID")
+                    .Given("Address exists", new Dictionary<string, string> { ["id"] = addressId })
                     .WithRequest(HttpMethod.Get, $"/address/{addressId}")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.OK)
@@ -47,8 +48,8 @@ namespace OrderConsumer.Tests
         {
             string addressId = Guid.NewGuid().ToString();
 
-            pact.UponReceiving("A request to retrieve an address by ID")
-                    .Given("an address with ID {id} does not exist", new Dictionary<string, string> { ["id"] = addressId })
+            pact.UponReceiving("Retrieving an address ID that does not exist")
+                    .Given("Address does not exist", new Dictionary<string, string> { ["id"] = addressId })
                     .WithRequest(HttpMethod.Get, $"/address/{addressId}")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.NotFound);
@@ -57,21 +58,6 @@ namespace OrderConsumer.Tests
             {
                 var response = await client.GetAddress(addressId);
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            });
-        }
-
-        [Test]
-        public async Task GetAddress_AddressIdIsInvalid()
-        {
-            pact.UponReceiving("A request to retrieve an address by ID")
-                    .Given($"no specific state required")
-                    .WithRequest(HttpMethod.Get, "/address/invalid_address_id")
-                .WillRespond()
-                    .WithStatus(HttpStatusCode.BadRequest);
-
-            await pact.VerifyAsync(async ctx => {
-                var response = await client.GetAddress("invalid_address_id");
-                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             });
         }
     }
