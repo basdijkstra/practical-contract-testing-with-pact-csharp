@@ -8,8 +8,6 @@ namespace OrderConsumer.Tests
     {
         protected IPactBuilderV3 pact;
         protected AddressClient client;
-        protected readonly string addressIdExisting = "93edc1a1-5093-4d30-a9c1-da04765553b7";
-        protected readonly string addressIdNonexistent = "3514466e-3e58-48b3-ab35-e553b91aa2b3";
         
         private string pactDir = Path.Join("..", "..", "..", "pacts");
         private readonly int port = 9876;
