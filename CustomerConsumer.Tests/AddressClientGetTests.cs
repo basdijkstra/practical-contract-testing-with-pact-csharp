@@ -26,7 +26,10 @@ namespace CustomerConsumer.Tests
                 AddressType = Match.Type("billing"),
                 Street = Match.Type("Main street"),
                 Number = Match.Integer(123),
-                City = Match.Type("Los Angeles")
+                City = Match.Type("Los Angeles"),
+                ZipCode = Match.Integer(12345),
+                State = Match.Type("California"),
+                Country = Match.Regex("United States", "United States|Canada")
             };
 
             pact.UponReceiving("Retrieving an existing address ID")
@@ -63,6 +66,20 @@ namespace CustomerConsumer.Tests
              * using '00000000-0000-0000-0000-000000000000' as the address ID to retrieve.
              * Verify that the status code returned is equal to HttpStatusCode.NotFound.
              */
+
+            string addressId = Guid.NewGuid().ToString();
+
+            pact.UponReceiving("Retrieving an address ID that does not exist")
+                    .Given("Address does not exist", new Dictionary<string, string> { ["id"] = addressId })
+                    .WithRequest(HttpMethod.Get, $"/address/{addressId}")
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.NotFound);
+
+            await pact.VerifyAsync(async ctx =>
+            {
+                var response = await client.GetAddress(addressId);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            });
         }
 
         [Test]
@@ -80,6 +97,20 @@ namespace CustomerConsumer.Tests
              * using 'invalid_address_id' as the address ID to retrieve.
              * Verify that the status code returned is equal to HttpStatusCode.BadRequest.
              */
+
+            string addressId = "invalid_address_id";
+
+            pact.UponReceiving("Retrieving an invalid address ID")
+                    .Given("No specific state required")
+                    .WithRequest(HttpMethod.Get, $"/address/{addressId}")
+                .WillRespond()
+                    .WithStatus(HttpStatusCode.BadRequest);
+
+            await pact.VerifyAsync(async ctx =>
+            {
+                var response = await client.GetAddress(addressId);
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            });
         }
     }
 }
