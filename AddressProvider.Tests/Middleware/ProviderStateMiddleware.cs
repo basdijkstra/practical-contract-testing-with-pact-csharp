@@ -22,9 +22,9 @@ namespace AddressProvider.Tests.Middleware
             _addresses = addresses;
             _providerStates = new Dictionary<string, Func<IDictionary<string, object>, Task>>
             {
-                ["an address with ID {id} exists"] = CreateAddress,
-                ["an address with ID {id} does not exist"] = DeleteAddress,
-                ["no specific state required"] = DoNothing
+                ["Address exists"] = CreateAddress,
+                ["Address does not exist"] = DeleteAddress,
+                ["No specific state required"] = DoNothing
             };
         }
 

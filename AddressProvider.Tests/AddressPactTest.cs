@@ -27,22 +27,16 @@ namespace AddressProvider.Tests
 
             this.verifier = new PactVerifier("address_provider", new PactVerifierConfig()
             {
-                LogLevel = PactNet.PactLogLevel.Information
+                LogLevel = PactNet.PactLogLevel.Information,
             });
-
-            var pactFolder = new DirectoryInfo(Path.Join("..", "..", "..", "pacts"));
-
-            //this.verifier!
-            //    .WithHttpEndpoint(PactServiceUri)
-            //    .WithDirectorySource(pactFolder)
-            //    .WithProviderStateUrl(new Uri($"{PactServiceUri}provider-states"))
-            //    .Verify();
 
             this.verifier!
                 .WithHttpEndpoint(PactServiceUri)
                 .WithPactBrokerSource(new Uri(Environment.GetEnvironmentVariable("PACT_BROKER_BASE_URL")!), options =>
                 {
-                    options.TokenAuthentication(Environment.GetEnvironmentVariable("PACT_BROKER_TOKEN")).PublishResults("1.0.0");
+                    options
+                    .TokenAuthentication(Environment.GetEnvironmentVariable("PACT_BROKER_TOKEN"))
+                    .PublishResults("1.0.0");
                 })
                 .WithProviderStateUrl(new Uri($"{PactServiceUri}provider-states"))
                 .Verify();
