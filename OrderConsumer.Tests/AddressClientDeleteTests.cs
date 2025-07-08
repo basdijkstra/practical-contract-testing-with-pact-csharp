@@ -12,7 +12,7 @@ namespace OrderConsumer.Tests
             string addressId = Guid.NewGuid().ToString();
 
             pact.UponReceiving("Deleting an address ID")
-                    .Given("an address with ID {id} exists", new Dictionary<string, string> { ["id"] = addressId })
+                    .Given("No specific state required")
                     .WithRequest(HttpMethod.Delete, $"/address/{addressId}")
                 .WillRespond()
                     .WithStatus(HttpStatusCode.NoContent);
