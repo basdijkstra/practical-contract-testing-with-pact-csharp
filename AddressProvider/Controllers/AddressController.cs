@@ -27,15 +27,14 @@ namespace AddressProvider.Controllers
                 return BadRequest();
             }
 
-            try
-            {
-                AddressDto address = await this.addresses.GetAddressByIdAsync(id);
-                return Ok(address);
-            }
-            catch (KeyNotFoundException)
+            AddressDto address = await this.addresses.GetAddressByIdAsync(id);
+
+            if (address is null)
             {
                 return NotFound();
             }
+
+            return Ok(address);
         }
 
         [HttpPost(Name = "POST a new address")]

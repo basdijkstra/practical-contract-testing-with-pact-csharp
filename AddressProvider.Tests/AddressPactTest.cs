@@ -30,14 +30,6 @@ namespace AddressProvider.Tests
                 LogLevel = PactNet.PactLogLevel.Information
             });
 
-            var pactFolder = new DirectoryInfo(Path.Join("..", "..", "..", "pacts"));
-
-            //this.verifier!
-            //    .WithHttpEndpoint(PactServiceUri)
-            //    .WithDirectorySource(pactFolder)
-            //    .WithProviderStateUrl(new Uri($"{PactServiceUri}provider-states"))
-            //    .Verify();
-
             this.verifier!
                 .WithHttpEndpoint(PactServiceUri)
                 .WithPactBrokerSource(new Uri(Environment.GetEnvironmentVariable("PACT_BROKER_BASE_URL")!), options =>

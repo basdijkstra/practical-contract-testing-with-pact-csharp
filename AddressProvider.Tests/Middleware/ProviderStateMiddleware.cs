@@ -22,14 +22,14 @@ namespace AddressProvider.Tests.Middleware
             _addresses = addresses;
             _providerStates = new Dictionary<string, Func<IDictionary<string, object>, Task>>
             {
-                ["an address with ID {id} exists"] = CreateAddress,
-                ["an address with ID {id} does not exist"] = DeleteAddress,
-                ["no specific state required"] = DoNothing
-            };
-        }
+                /**
+                 * TODO: Add two more provider state entries and their handler method names:
+                 * - One for the provider state "Address does not exist",
+                 * - Another for the provider state "No specific state required"
+                 */
 
-        private async Task DoNothing(IDictionary<string, object> parameters)
-        {
+                ["Address exists"] = CreateAddress,
+            };
         }
 
         private async Task CreateAddress(IDictionary<string, object> parameters)
@@ -51,12 +51,21 @@ namespace AddressProvider.Tests.Middleware
             await _addresses.AddAddressAsync(address);
         }
 
-        private async Task DeleteAddress(IDictionary<string, object> parameters)
-        {
-            JsonElement id = (JsonElement)parameters["id"];
+        /**
+         * TODO: Add a provider state handler method for the provider state "No specific state required".
+         * This method has the same method signature as the CreateAddress method.
+         * The method body can be left empty as we do not need to do anything for this provider state.
+         */
 
-            await _addresses.DeleteAddressAsync(id.GetString()!);
-        }
+        /**
+         * TODO: Add a provider state handler method for the provider state "Address does not exist".
+         * This method also has the same method signature as the CreateAddress method.
+         * The method should:
+         * - Read the value for 'id' supplied in the parameters as a JsonElement
+         * - Delete the address with that id from the _addresses address repository.
+         *   Use the DeleteAddressAsync() method to do this (make sure to await the result!).
+         *   Make sure to convert the JsonElement to a string so you can pass it as an argument to DeleteAddressAsync().
+         */
 
         public async Task InvokeAsync(HttpContext context)
         {
