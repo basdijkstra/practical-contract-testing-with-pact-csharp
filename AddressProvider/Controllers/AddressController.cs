@@ -35,16 +35,6 @@ namespace AddressProvider.Controllers
             }
 
             return Ok(address);
-
-            //try
-            //{
-            //    AddressDto address = await this.addresses.GetAddressByIdAsync(id);
-            //    return Ok(address);
-            //}
-            //catch (KeyNotFoundException)
-            //{
-            //    return NotFound();
-            //}
         }
 
         [HttpPost(Name = "POST a new address")]
