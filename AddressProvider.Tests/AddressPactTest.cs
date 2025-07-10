@@ -34,7 +34,9 @@ namespace AddressProvider.Tests
                 .WithHttpEndpoint(PactServiceUri)
                 .WithPactBrokerSource(new Uri(Environment.GetEnvironmentVariable("PACT_BROKER_BASE_URL")!), options =>
                 {
-                    options.TokenAuthentication(Environment.GetEnvironmentVariable("PACT_BROKER_TOKEN")).PublishResults("1.0.0");
+                    options
+                    .TokenAuthentication(Environment.GetEnvironmentVariable("PACT_BROKER_TOKEN"))
+                    .PublishResults(Environment.GetEnvironmentVariable("ADDRESS_PROVIDER_VERSION") ?? "1.0.0-address");
                 })
                 .WithProviderStateUrl(new Uri($"{PactServiceUri}provider-states"))
                 .Verify();
