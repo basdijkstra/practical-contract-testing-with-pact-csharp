@@ -1,0 +1,128 @@
+name: CI exercises
+
+on:
+  push:
+    branches:
+      - main
+      - answers
+  pull_request:
+
+concurrency:
+  # For pull requests, cancel all currently-running jobs for this workflow
+  # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+  ADDRESS_PROVIDER_VERSION: 1.0.0-address-${{ github.sha }}
+
+jobs:
+
+  cdct-with-pact-ci-exercises:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: List installed .NET SDKs
+        run: dotnet --list-sdks
+
+      ##### Exercises for section: Continuous Integration #####
+
+      # TODO: Add a step that runs the contract generation tests
+      #   for the customer-consumer
+      #
+      # The working directory is ./CustomerConsumer.Tests
+      #
+      # The command you need to use is the same as you used to
+      #   run tests locally: 'dotnet test'
+
+      - name: Run customer-consumer tests
+        working-directory: ./CustomerConsumer.Tests
+        run: dotnet test
+
+      # TODO: Add a step that publishes the generated contract to the Pact Broker.
+      #
+      # Use the pactflow/actions/publish-pact-files@v2 GitHub Action to do so.
+      #
+      # The pactfiles are in ./CustomerConsumer.Tests/pacts
+      #
+      # The PACT_BROKER_BASE_URL and PACT_BROKER_TOKEN should be defined as
+      #   repository secrets in your repository. See the documentation linked to
+      #   in the video transcripts for detailed instructions on how to do that.
+
+      - name: Publish customer-consumer contract
+        uses: pactflow/actions/publish-pact-files@v2
+        with:
+          pactfiles: ./CustomerConsumer.Tests/pacts
+          version: 1.0.0-customer-${{ github.sha }}
+          broker_url: ${{ env.PACT_BROKER_BASE_URL }}
+          token: ${{ env.PACT_BROKER_TOKEN }}
+
+      # TODO: First, add a new environment variable ADDRESS_PROVIDER_VERSION
+      #   to the .env section at the top of this file. As a value, use
+      #   1.0.0-address-${{ github.sha }}
+      # 
+      # Then, add a step that runs the contract verification tests
+      #   for the address-provider
+      #
+      # The working directory is ./AddressProvider.Tests
+      #
+      # The command you need to use is the same as you used to
+      #   run tests locally: 'dotnet test'
+
+      - name: Run provider verification tests and publish results
+        working-directory: ./AddressProvider.Tests
+        run: dotnet test
+
+      # TODO: push the updates to your repository and check the GitHub Actions output
+
+      # TODO: check your Pact Broker to see if the contract is published correctly, and
+      #   if the contract has been successfully verified by the provider (it should)
+
+      ##### Exercises for section: can-i-deploy #####
+
+      # TODO: Add a step that runs can-i-deploy to check if it is safe for the
+      #   current customer_consumer version to be deployed into the staging environment.
+
+      - name: can-i-deploy customer_consumer
+        uses: pactflow/actions/can-i-deploy@v2
+        with:
+          application_name: customer_consumer
+          version: 1.0.0-customer-${{ github.sha }}
+          broker_url: ${{ env.PACT_BROKER_BASE_URL }}
+          token: ${{ env.PACT_BROKER_TOKEN }}
+          to_environment: staging
+
+      - name: Deploy customer_consumer
+        run: echo Deploying... Done!
+
+      - name: Run post-deployment sanity checks for customer_consumer
+        run: echo Checking if deployment was successful... All good!
+
+      # TODO: Add a step that runs record-deployment to let the Pact Broker know that
+      #   the current version of the customer_consumer service has been successfully
+      #   deployed to the staging environment
+
+      - name: record-deployment customer_consumer
+        uses: pactflow/actions/record-deployment@v2
+        with:
+          application_name: customer_consumer
+          version: 1.0.0-customer-${{ github.sha }}
+          broker_url: ${{ env.PACT_BROKER_BASE_URL }}
+          token: ${{ env.PACT_BROKER_TOKEN }}
+          environment: staging
+
+      # TODO: push your changes to your remote repository and check the output of the
+      #   build that was triggered. Also have a look at the Pact Broker to see what
+      #   has happened and if you can see the result of your CI actions.
