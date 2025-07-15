@@ -41,7 +41,7 @@ jobs:
         working-directory: ./OrderConsumer.Tests
         run: dotnet test
 
-      - name: Publish order-consumer contract
+      - name: Publish order consumer contract
         uses: pactflow/actions/publish-pact-files@v2
         with:
           pactfiles: ./OrderConsumer.Tests/pacts
