@@ -16,6 +16,7 @@ concurrency:
 env:
   PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+  ADDRESS_PROVIDER_VERSION: 1.0.0-address-${{ github.sha }}
 
 jobs:
 
@@ -47,3 +48,7 @@ jobs:
           version: 1.0.0-order-${{ github.sha }}
           broker_url: ${{ env.PACT_BROKER_BASE_URL }}
           token: ${{ env.PACT_BROKER_TOKEN }}
+
+      - name: Run provider verification tests and publish results
+        working-directory: ./AddressProvider.Tests
+        run: dotnet test
