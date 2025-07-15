@@ -81,14 +81,6 @@ jobs:
       # TODO: Add a step that runs can-i-deploy to check if it is safe for the
       #   current customer_consumer version to be deployed into the staging environment.
 
-      - name: can-i-deploy customer_consumer
-        uses: pactflow/actions/can-i-deploy@v2
-        with:
-          application_name: customer_consumer
-          version: 1.0.0-customer-${{ github.sha }}
-          broker_url: ${{ env.PACT_BROKER_BASE_URL }}
-          token: ${{ env.PACT_BROKER_TOKEN }}
-          to_environment: staging
 
       - name: Deploy customer_consumer
         run: echo Deploying... Done!
@@ -100,14 +92,6 @@ jobs:
       #   the current version of the customer_consumer service has been successfully
       #   deployed to the staging environment
 
-      - name: record-deployment customer_consumer
-        uses: pactflow/actions/record-deployment@v2
-        with:
-          application_name: customer_consumer
-          version: 1.0.0-customer-${{ github.sha }}
-          broker_url: ${{ env.PACT_BROKER_BASE_URL }}
-          token: ${{ env.PACT_BROKER_TOKEN }}
-          environment: staging
 
       # TODO: push your changes to your remote repository and check the output of the
       #   build that was triggered. Also have a look at the Pact Broker to see what
