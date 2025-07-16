@@ -36,7 +36,11 @@ namespace AddressProvider.Tests
                 {
                     options
                     .TokenAuthentication(Environment.GetEnvironmentVariable("PACT_BROKER_TOKEN"))
-                    .PublishResults(Environment.GetEnvironmentVariable("ADDRESS_PROVIDER_VERSION") ?? "1.0.0");
+                    .EnablePending()
+                    .PublishResults(Environment.GetEnvironmentVariable("ADDRESS_PROVIDER_VERSION") ?? "1.1.0", publishOptions =>
+                    {
+                        publishOptions.ProviderBranch("main");
+                    });
                 })
                 .WithProviderStateUrl(new Uri($"{PactServiceUri}provider-states"))
                 .Verify();

@@ -29,6 +29,7 @@ namespace AddressProvider.Tests.Middleware
                  */
 
                 ["Address exists"] = CreateAddress,
+                ["PO Box address exists"] = CreatePoBoxAddress,
                 ["Address does not exist"] = DeleteAddress,
                 ["No specific state required"] = DoNothing
             };
@@ -44,6 +45,24 @@ namespace AddressProvider.Tests.Middleware
                 AddressType = "delivery",
                 Street = "Main street",
                 Number = 123,
+                City = "Sun City",
+                ZipCode = 90210,
+                State = "Yukon",
+                Country = "United States"
+            };
+
+            await _addresses.AddAddressAsync(address);
+        }
+
+        private async Task CreatePoBoxAddress(IDictionary<string, object> parameters)
+        {
+            JsonElement id = (JsonElement)parameters["id"];
+
+            AddressDto address = new AddressDto
+            {
+                Id = id.GetString()!,
+                AddressType = "billing",
+                PoBox = 9876,
                 City = "Sun City",
                 ZipCode = 90210,
                 State = "Yukon",
