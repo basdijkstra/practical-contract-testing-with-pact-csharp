@@ -45,7 +45,7 @@ namespace OrderConsumer.Tests
         }
 
         /**
-        * TODO: Add a third test, one that writes a new interaction to the contract, for an HTTP 400 situation.
+        * TODO: Complete the test below, one that writes a new interaction to the contract, for an HTTP 400 situation.
         *   
         *   First, define the WireMock stub definition by completing the SetupStubInvalidOrderId() method.
         *   
@@ -61,6 +61,11 @@ namespace OrderConsumer.Tests
         public async Task GetPayment_InvalidOrderId_ShouldYieldHttp400()
         {
             this.SetupStubInvalidOrderId();
+
+            var response = await new PaymentClient(new Uri(this.Server!.Url!))
+                .GetPaymentForOrder("invalid-order-id");
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
         private void SetupStubValidExistingOrderId()
@@ -100,6 +105,13 @@ namespace OrderConsumer.Tests
             /**
              * TODO: set up the stub implemention in this method.
              */
+            this.Server?
+                .WithConsumer("order_consumer")
+                .WithProvider("payment_provider")
+                .Given(Request.Create().WithPath("/payment/invalid-order-id").UsingGet())
+                .WithTitle("A GET request with an invalid order ID")
+                .RespondWith(Response.Create()
+                .WithStatusCode(400));
         }
 
         [OneTimeTearDown]
