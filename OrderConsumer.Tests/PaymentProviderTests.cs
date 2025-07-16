@@ -45,7 +45,7 @@ namespace OrderConsumer.Tests
         }
 
         /**
-        * TODO: Add a third test, one that writes a new interaction to the contract, for an HTTP 400 situation.
+        * TODO: Complete the below test, one that writes a new interaction to the contract, for an HTTP 400 situation.
         *   
         *   First, define the WireMock stub definition by completing the SetupStubInvalidOrderId() method.
         *   
