@@ -9,7 +9,7 @@
             this.baseUri = baseUri;
         }
 
-        public async Task<HttpResponseMessage> GetPayment(string id)
+        public async Task<HttpResponseMessage> GetPaymentForOrder(string id)
         {
             using (var client = new HttpClient { BaseAddress = baseUri })
             {
